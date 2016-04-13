@@ -54,7 +54,7 @@ namespace Gen_algo_Eating_creatures
         Creature[] creatures;
         DrawStruct[] drawCreatures;
         List<Food> food = new List<Food>();
-        int nmbrOfFood = 20;
+        int nmbrOfFood = 500;
 
         //Start of the vertex buffer
         GraphicsBuffer buffer = new GraphicsBuffer();
@@ -147,7 +147,10 @@ namespace Gen_algo_Eating_creatures
         GraphicsBuffer[] buf;
         long lastTime = 0;
         long timeSinceLast = 0;
-        int interval = 100;
+        int interval = 50;
+
+        int year = 0;
+
         private void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
             timeSinceLast = stopWatch.ElapsedMilliseconds - lastTime;
@@ -172,6 +175,13 @@ namespace Gen_algo_Eating_creatures
                     }
                 }
                 lastTime = stopWatch.ElapsedMilliseconds;
+                year++;
+                if(year > 100)
+                {
+                    creatures = Evolution.Evole(creatures);
+                    Console.WriteLine("Another generation passes on");
+                    year = 0;
+                }
             }
         }
 
@@ -188,9 +198,7 @@ namespace Gen_algo_Eating_creatures
             GL.BlendFunc(BlendingFactorSrc.SrcAlpha, BlendingFactorDest.OneMinusSrcAlpha);
 
             //Create the projection matrix for the scene
-            Matrix4 proj = Matrix4.CreateOrthographicOffCenter(0, window.Width, window.Height, 0, 0, 1);
-            GL.MatrixMode(MatrixMode.Projection);
-            GL.LoadMatrix(ref proj);
+            Camera.MoveCamera();
 
             //Bind the texture that will be used
             GL.BindTexture(TextureTarget.Texture2D, texture.ID);

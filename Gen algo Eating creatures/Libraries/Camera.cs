@@ -249,7 +249,7 @@ namespace Gen_algo_Eating_creatures
         /// <summary>
         /// Move the camera by doing all the matrix math
         /// </summary>
-        private static void MoveCamera()
+        public static void MoveCamera()
         {
             Matrix4 proj = Matrix4.CreateOrthographicOffCenter(0, window.Width, window.Height, 0, 0, 1);
 
@@ -310,7 +310,7 @@ namespace Gen_algo_Eating_creatures
             CheckPresses();
             DrawCursorPosition(buffer[0], cursorSize, out buffer[0]);
             DrawClickPositions(buffer[1], out buffer[1]);
-            MoveCamera();
+            //MoveCamera();
             return buffer;
         }
     }

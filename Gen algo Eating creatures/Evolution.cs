@@ -10,11 +10,6 @@ namespace Gen_algo_Eating_creatures
     {
         Creature[] creatures;
 
-        public Evolution(Creature[] creat)
-        {
-            creatures = creat;
-        }
-
         static public Creature[] Evole(Creature[] population)
         {
             int maxTotal = 0;
@@ -28,9 +23,40 @@ namespace Gen_algo_Eating_creatures
             List<Creature> matingPool = new List<Creature>();
             foreach(Creature c in population)
             {
-               // for(int i = 0; i < 
+                for(int i = 0; i < c.totalFood/maxTotal*10; i++)
+                {
+                    matingPool.Add(c);
+                }
             }
-            return population;
+
+            Random rand = new Random();
+            Creature[] nextPop = new Creature[population.Length];
+            for (int i = 0; i < population.Length; i++)
+            {
+                nextPop[i] = new Creature(population[i].position, 
+                    CrossOver(population[rand.Next(0, population.Length)], population[rand.Next(0, population.Length)],
+                    rand), OpenTK.Vector2.UnitX, 3);
+            }
+            return nextPop;
         }
+
+    static private string CrossOver(Creature a, Creature b, Random rand)
+    {
+        string dna = "";
+        int val = 0;
+        for(int i = 0; i < a.genome.Length; i++)
+        {
+            val = rand.Next(0, 2);
+            if(val == 0)
+            {
+                dna += a.genome[i];
+            }
+            else
+            {
+                dna += b.genome[i];
+            }
+        }
+        return dna;
+    }
     }
 }
