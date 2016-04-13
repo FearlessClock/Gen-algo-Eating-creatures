@@ -10,7 +10,7 @@ namespace Gen_algo_Eating_creatures
     class Creature
     {
         Vector2 position;
-        int totalFood;
+        public int totalFood;
         public string genome;
         Vector2 direction;
         int step;

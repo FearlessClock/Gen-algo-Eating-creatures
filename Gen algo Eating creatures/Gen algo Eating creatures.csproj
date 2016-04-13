@@ -51,6 +51,7 @@
     <Compile Include="ContentPipe.cs" />
     <Compile Include="Creature.cs" />
     <Compile Include="DrawStruct.cs" />
+    <Compile Include="Evolution.cs" />
     <Compile Include="Food.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Libraries\Buffer.cs" />

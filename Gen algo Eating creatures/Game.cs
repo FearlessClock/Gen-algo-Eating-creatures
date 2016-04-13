@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using OpenTK;
 using OpenTK.Graphics.OpenGL;
 using System.Drawing;
+using System.Diagnostics;
 
 namespace Gen_algo_Eating_creatures
 {
@@ -46,7 +47,9 @@ namespace Gen_algo_Eating_creatures
         public GameWindow window;
         Texture2D texture;
 
-        int nmbrOfCreatures = 2;
+        Stopwatch stopWatch = new Stopwatch();
+
+        int nmbrOfCreatures = 30;
         int lengthOfDNA = 100;
         Creature[] creatures;
         DrawStruct[] drawCreatures;
@@ -91,7 +94,7 @@ namespace Gen_algo_Eating_creatures
                             break;
                     }
                 }
-                creatures[i] = new Creature(new Vector2(i * 10, 300), dna, Vector2.UnitX, 3);
+                creatures[i] = new Creature(new Vector2(i * 10+200, 300), dna, Vector2.UnitX, 3);
                 drawCreatures[i] = creatures[i].Draw();
             }
 
@@ -125,6 +128,7 @@ namespace Gen_algo_Eating_creatures
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
             BufferFill(buffer);
 
+            stopWatch.Start();
         }
 
         private void BufferFill(GraphicsBuffer buf)
@@ -141,32 +145,40 @@ namespace Gen_algo_Eating_creatures
 
         }
         GraphicsBuffer[] buf;
+        long lastTime = 0;
+        long timeSinceLast = 0;
+        int interval = 100;
         private void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
-            BufferFill(buffer);
+            timeSinceLast = stopWatch.ElapsedMilliseconds - lastTime;
+            
             buf = Camera.CameraUpdate();
             foreach (GraphicsBuffer b in buf)
             {
                 BufferFill(b);
             }
-            for(int i = 0; i < creatures.Length; i++)
+            if (interval < timeSinceLast)
             {
-                creatures[i].Update(food);
-                drawCreatures[i] = creatures[i].Draw();
-            }
-            for(int i = 0; i < food.Count; i++)
-            {
-                if(!food[i].isAlive)
+                for (int i = 0; i < creatures.Length; i++)
                 {
-                    food.RemoveAt(i);
+                    creatures[i].Update(food);
+                    drawCreatures[i] = creatures[i].Draw();
                 }
+                for (int i = 0; i < food.Count; i++)
+                {
+                    if (!food[i].isAlive)
+                    {
+                        food.RemoveAt(i);
+                    }
+                }
+                lastTime = stopWatch.ElapsedMilliseconds;
             }
         }
 
         private void Window_RenderFrame(object sender, FrameEventArgs e)
         {
             //Clear screen color
-            GL.ClearColor(Color.FromArgb(5, 5, 25));
+            GL.ClearColor(Color.Black);
             GL.Clear(ClearBufferMask.ColorBufferBit);
 
             //Enable color blending, which allows transparency
