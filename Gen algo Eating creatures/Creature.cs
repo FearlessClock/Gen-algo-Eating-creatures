@@ -11,7 +11,7 @@ namespace Gen_algo_Eating_creatures
     {
         Vector2 position;
         int totalFood;
-        string genome;
+        public string genome;
         Vector2 direction;
         int step;
         int lastCommand = 0;
@@ -19,7 +19,7 @@ namespace Gen_algo_Eating_creatures
 
         Dictionary<char, Func<bool>> commands = new Dictionary<char, Func<bool>>();
 
-        public Creature(Vector2 pos, string dna, Vector2 dir, int s = 10, int total = 0)
+        public Creature(Vector2 pos, string dna, Vector2 dir, int total = 0, int s = 10)
         {
             position = pos;
             genome = dna;
@@ -32,13 +32,14 @@ namespace Gen_algo_Eating_creatures
             commands.Add('R', TurnRight);
         }
 
-        public void Update(Vector3[] food)
+        public void Update(List<Food> food)
         {
-            foreach(Vector3 f in food)
+            foreach(Food f in food)
             {
-                if(DistanceBetween(f) < 10)
+                if(DistanceBetween(f.position) < 10)
                 {
                     totalFood++;
+                    f.isAlive = false;
                 }
             }
             char command = genome[lastCommand];

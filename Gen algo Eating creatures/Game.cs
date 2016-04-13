@@ -46,11 +46,12 @@ namespace Gen_algo_Eating_creatures
         public GameWindow window;
         Texture2D texture;
 
-        int nmbrOfCreatures = 20;
+        int nmbrOfCreatures = 2;
         int lengthOfDNA = 100;
         Creature[] creatures;
         DrawStruct[] drawCreatures;
-        Vector3[] food = new Vector3[50];
+        List<Food> food = new List<Food>();
+        int nmbrOfFood = 20;
 
         //Start of the vertex buffer
         GraphicsBuffer buffer = new GraphicsBuffer();
@@ -90,13 +91,13 @@ namespace Gen_algo_Eating_creatures
                             break;
                     }
                 }
-                creatures[i] = new Creature(new Vector2(i * 10, 300), dna, Vector2.UnitX);
+                creatures[i] = new Creature(new Vector2(i * 10, 300), dna, Vector2.UnitX, 3);
                 drawCreatures[i] = creatures[i].Draw();
             }
 
-            for(int i = 0; i < food.Length; i++)
+            for(int i = 0; i < nmbrOfFood; i++)
             {
-                food[i] = new Vector3(rand.Next(0, window.Width), rand.Next(0, window.Height), 0);
+                food.Add(new Food(1, new Vector3(rand.Next(0, window.Width), rand.Next(0, window.Height), 0)));
             }
 
             buffer.vertBuffer = new Vertex[4]
@@ -153,6 +154,13 @@ namespace Gen_algo_Eating_creatures
                 creatures[i].Update(food);
                 drawCreatures[i] = creatures[i].Draw();
             }
+            for(int i = 0; i < food.Count; i++)
+            {
+                if(!food[i].isAlive)
+                {
+                    food.RemoveAt(i);
+                }
+            }
         }
 
         private void Window_RenderFrame(object sender, FrameEventArgs e)
@@ -202,9 +210,9 @@ namespace Gen_algo_Eating_creatures
             GL.BindBuffer(BufferTarget.ArrayBuffer, buffer.VBO);
             //Change texture
 
-            for (int i = 0; i < nmbrOfCreatures; i++)
+            for (int i = 0; i < food.Count; i++)
             {
-                Matrix4 mat = Matrix4.CreateTranslation(food[i]);  //Create a translation matrix
+                Matrix4 mat = Matrix4.CreateTranslation(food[i].position);  //Create a translation matrix
                 GL.MatrixMode(MatrixMode.Modelview);    //Load the modelview matrix, last in the chain of view matrices
                 GL.LoadMatrix(ref mat);                 //Load the translation matrix into the modelView matrix
                 mat = Matrix4.CreateScale(5,5,0);
