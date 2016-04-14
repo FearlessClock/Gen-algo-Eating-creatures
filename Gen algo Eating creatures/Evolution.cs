@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-
+using OpenTK;
 namespace Gen_algo_Eating_creatures
 {
     class Evolution
@@ -34,7 +34,7 @@ namespace Gen_algo_Eating_creatures
             Creature[] nextPop = new Creature[population.Length];
             for (int i = 0; i < population.Length; i++)
             {
-                nextPop[i] = new Creature(new OpenTK.Vector2(i * 10 + 200, 300),
+                nextPop[i] = new Creature(new Vector2((float)Math.Cos(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300, (float)Math.Sin(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300),
                     CrossOver(population[rand.Next(0, population.Length)], population[rand.Next(0, population.Length)],
                     rand), OpenTK.Vector2.UnitX, (int)population[i].windowSize.X, (int)population[i].windowSize.Y, 3);
             }

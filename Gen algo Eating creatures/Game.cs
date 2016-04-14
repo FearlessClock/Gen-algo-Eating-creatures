@@ -50,7 +50,7 @@ namespace Gen_algo_Eating_creatures
 
         Stopwatch stopWatch = new Stopwatch();
 
-        int nmbrOfCreatures = 30;
+        int nmbrOfCreatures = 100;
         int lengthOfDNA = 100;
         Creature[] creatures;
         DrawStruct[] drawCreatures;
@@ -62,7 +62,7 @@ namespace Gen_algo_Eating_creatures
         long lastTime = 0;
         long timeSinceLast = 0;
         int interval = 1;
-        int generationGap = 500;
+        int generationGap = 400;
 
         int year = 0;
 
@@ -91,11 +91,12 @@ namespace Gen_algo_Eating_creatures
             for(int i = 0; i < nmbrOfCreatures; i++)
             {
                 string dna = "";
-                for(int j = 0; j < lengthOfDNA; j++)
+                for (int j = 0; j < lengthOfDNA; j++)
                 {
-                    switch(rand.Next(0, 3))
+                    switch (rand.Next(0,3))
                     {
-                        case 0: dna += 'F';
+                        case 0:
+                            dna += 'F';
                             break;
                         case 1:
                             dna += 'L';
@@ -105,7 +106,7 @@ namespace Gen_algo_Eating_creatures
                             break;
                     }
                 }
-                creatures[i] = new Creature(new Vector2(i * 10+200, 300), dna, Vector2.UnitX, window.Width, window.Height, 3);
+                creatures[i] = new Creature(new Vector2((float)Math.Cos(MathHelper.DegreesToRadians(i*10))*(30+ i) +300, (float)Math.Sin(MathHelper.DegreesToRadians(i*10))* (30 + i) + 300), dna, Vector2.UnitX, window.Width, window.Height, 3);
                 drawCreatures[i] = creatures[i].Draw();
             }
 
@@ -149,7 +150,6 @@ namespace Gen_algo_Eating_creatures
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, buf.IBO);
             GL.BufferData(BufferTarget.ElementArrayBuffer, (IntPtr)(sizeof(uint) * (buf.indexBuffer.Length)), buf.indexBuffer, BufferUsageHint.StaticDraw);
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, 0);
-
         }
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -235,7 +235,7 @@ namespace Gen_algo_Eating_creatures
                 mat = Matrix4.CreateScale(drawCreatures[i].scale);
                 GL.MultMatrix(ref mat);                     //Multiply the scale matrix with the modelview matrix
                 mat = Matrix4.CreateRotationZ(drawCreatures[i].rotation);
-                GL.MultMatrix(ref mat);
+                //GL.MultMatrix(ref mat);
                 GL.DrawElements(PrimitiveType.Quads, buffer.indexBuffer.Length, DrawElementsType.UnsignedInt, 0);
             }
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, buffer.IBO);
