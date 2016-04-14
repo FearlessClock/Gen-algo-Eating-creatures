@@ -54,6 +54,7 @@
   <ItemGroup>
     <Compile Include="ContentPipe.cs" />
     <Compile Include="Creature.cs" />
+    <Compile Include="DBConnect.cs" />
     <Compile Include="DrawStruct.cs" />
     <Compile Include="Evolution.cs" />
     <Compile Include="Food.cs" />
