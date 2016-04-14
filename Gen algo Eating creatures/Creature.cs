@@ -15,17 +15,20 @@ namespace Gen_algo_Eating_creatures
         Vector2 direction;
         int step;
         int lastCommand = 0;
+        public Vector2 windowSize;
         
 
         Dictionary<char, Func<bool>> commands = new Dictionary<char, Func<bool>>();
 
-        public Creature(Vector2 pos, string dna, Vector2 dir, int total = 0, int s = 10)
+        public Creature(Vector2 pos, string dna, Vector2 dir, int wH, int wW, int total = 0, int s = 10)
         {
             position = pos;
             genome = dna;
             direction = dir;
             step = s;
             totalFood = total;
+            windowSize.X = wW;
+            windowSize.Y = wH;
 
             commands.Add('F', MoveForward);
             commands.Add('L', TurnLeft);
@@ -62,8 +65,19 @@ namespace Gen_algo_Eating_creatures
 
         private bool MoveForward()
         {
-            position += step * direction;
+            Vector2 pos = position + step * direction;
+            if (!OutsideBounds(pos))
+                position += step * direction;
             return true;
+        }
+
+        private bool OutsideBounds(Vector2 a)
+        {
+            if(a.X < 0 || a.Y < 0 || a.X >= windowSize.X || a.Y >= windowSize.Y)
+            {
+                return true;
+            }
+            return false;
         }
         private bool TurnLeft()
         {

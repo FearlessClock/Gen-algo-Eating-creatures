@@ -46,6 +46,7 @@ namespace Gen_algo_Eating_creatures
     {
         public GameWindow window;
         Texture2D texture;
+        Texture2D foodTex;
 
         Stopwatch stopWatch = new Stopwatch();
 
@@ -55,6 +56,15 @@ namespace Gen_algo_Eating_creatures
         DrawStruct[] drawCreatures;
         List<Food> food = new List<Food>();
         int nmbrOfFood = 500;
+
+
+        GraphicsBuffer[] buf;
+        long lastTime = 0;
+        long timeSinceLast = 0;
+        int interval = 1;
+        int generationGap = 500;
+
+        int year = 0;
 
         //Start of the vertex buffer
         GraphicsBuffer buffer = new GraphicsBuffer();
@@ -71,12 +81,13 @@ namespace Gen_algo_Eating_creatures
         }
 
 
+        Random rand = new Random();
         private void Window_Load(object sender, EventArgs e)
         {
             texture = ContentPipe.LoadTexture("explo.bmp");
+            foodTex = ContentPipe.LoadTexture("food.png");
             creatures = new Creature[nmbrOfCreatures];
             drawCreatures = new DrawStruct[nmbrOfCreatures];
-            Random rand = new Random();
             for(int i = 0; i < nmbrOfCreatures; i++)
             {
                 string dna = "";
@@ -94,7 +105,7 @@ namespace Gen_algo_Eating_creatures
                             break;
                     }
                 }
-                creatures[i] = new Creature(new Vector2(i * 10+200, 300), dna, Vector2.UnitX, 3);
+                creatures[i] = new Creature(new Vector2(i * 10+200, 300), dna, Vector2.UnitX, window.Width, window.Height, 3);
                 drawCreatures[i] = creatures[i].Draw();
             }
 
@@ -144,12 +155,6 @@ namespace Gen_algo_Eating_creatures
         {
 
         }
-        GraphicsBuffer[] buf;
-        long lastTime = 0;
-        long timeSinceLast = 0;
-        int interval = 50;
-
-        int year = 0;
 
         private void Window_UpdateFrame(object sender, FrameEventArgs e)
         {
@@ -172,14 +177,21 @@ namespace Gen_algo_Eating_creatures
                     if (!food[i].isAlive)
                     {
                         food.RemoveAt(i);
+                        food.Add(new Food(1, new Vector3(rand.Next(0, window.Width), rand.Next(0, window.Height), 0)));
                     }
                 }
                 lastTime = stopWatch.ElapsedMilliseconds;
                 year++;
-                if(year > 100)
+                if(year > generationGap)
                 {
                     creatures = Evolution.Evole(creatures);
-                    Console.WriteLine("Another generation passes on");
+                    food.Clear();
+                    for (int i = 0; i < nmbrOfFood; i++)
+                    {
+                        food.Add(new Food(1, new Vector3(rand.Next(0, window.Width), rand.Next(0, window.Height), 0)));
+                    }
+                    Console.WriteLine("Max Total: " + Evolution.lastMaxTotal);
+                    Console.WriteLine("DNA: " + creatures[0].genome);
                     year = 0;
                 }
             }
@@ -229,7 +241,7 @@ namespace Gen_algo_Eating_creatures
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, buffer.IBO);
             GL.BindBuffer(BufferTarget.ArrayBuffer, buffer.VBO);
             //Change texture
-
+            GL.BindTexture(TextureTarget.Texture2D, foodTex.ID);
             for (int i = 0; i < food.Count; i++)
             {
                 Matrix4 mat = Matrix4.CreateTranslation(food[i].position);  //Create a translation matrix
