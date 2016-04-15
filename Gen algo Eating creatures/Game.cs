@@ -51,20 +51,20 @@ namespace Gen_algo_Eating_creatures
 
         Stopwatch stopWatch = new Stopwatch();
 
-        int nmbrOfCreatures = 1;
+        int nmbrOfCreatures = 100;
         int lengthOfDNA = 100;
         Creature[] creatures;
 
         List<DrawStruct[]> drawCreatures;
         List<Food> food = new List<Food>();
-        int nmbrOfFood = 0;
+        int nmbrOfFood = 100;
 
 
         GraphicsBuffer[] buf;
         long lastTime = 0;
         long timeSinceLast = 0;
-        int interval = 1;
-        int generationGap = 4*150;
+        int interval = 0;
+        int generationGap = 4*100;
 
         int year = 0;
 
@@ -117,7 +117,7 @@ namespace Gen_algo_Eating_creatures
                             break;
                     }
                 }
-                creatures[i] = new Creature(new Vector2(window.Width/2,window.Height/2)/*(float)Math.Cos(MathHelper.DegreesToRadians(i*10))*(30+ i) +300, (float)Math.Sin(MathHelper.DegreesToRadians(i*10))* (30 + i) + 300)*/, dna/*parameters[1][i]*/, Vector2.UnitX, window.Width, window.Height, 3);
+                creatures[i] = new Creature(new Vector2(window.Width/2,window.Height/2)/*(float)Math.Cos(MathHelper.DegreesToRadians(i*10))*(30+ i) +300, (float)Math.Sin(MathHelper.DegreesToRadians(i*10))* (30 + i) + 300)*/, parameters[1][i], Vector2.UnitX, window.Width, window.Height, 3);
                 //drawCreatures[0][i] = creatures[i].Draw();
             }
 
@@ -199,9 +199,10 @@ namespace Gen_algo_Eating_creatures
                 year++;
                //Console.WriteLine(year);
                 //Console.ReadKey();
-                if(Camera.ChangeString)// year >= generationGap)
+                if(year >= generationGap)
                 {
                     creatures = Evolution.Evole(creatures, window);
+                    drawCreatures.Clear();
                     for(int i = 0; i < drawCreatures.Count; i++)
                     {
                         drawCreatures[i] = new DrawStruct[nmbrOfCreatures];
@@ -248,32 +249,35 @@ namespace Gen_algo_Eating_creatures
             GL.ColorPointer(4, ColorPointerType.Float, Vertex.SizeInBytes, (IntPtr)(Vector2.SizeInBytes * 2));
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, buffer.IBO);
             Matrix4 mat;
-            for (int j = 0; j < drawCreatures.Count; j++)
+            //for (int j = 0; j < drawCreatures.Count; j++)
+            //{
+            if (drawCreatures.Count > 0)
             {
                 for (int i = 1; i < nmbrOfCreatures; i++)
                 {
-                    mat = Matrix4.CreateTranslation(drawCreatures[j][i].translation);  //Create a translation matrix
+                    mat = Matrix4.CreateTranslation(drawCreatures[drawCreatures.Count - 1][i].translation);  //Create a translation matrix
                     GL.MatrixMode(MatrixMode.Modelview);    //Load the modelview matrix, last in the chain of view matrices
                     GL.LoadMatrix(ref mat);                 //Load the translation matrix into the modelView matrix
-                    mat = Matrix4.CreateScale(drawCreatures[j][i].scale);
+                    mat = Matrix4.CreateScale(drawCreatures[drawCreatures.Count - 1][i].scale);
                     GL.MultMatrix(ref mat);                     //Multiply the scale matrix with the modelview matrix
-                    mat = Matrix4.CreateRotationZ(drawCreatures[j][i].rotation);
+                    mat = Matrix4.CreateRotationZ(drawCreatures[drawCreatures.Count - 1][i].rotation);
                     //GL.MultMatrix(ref mat);
                     GL.DrawElements(PrimitiveType.Quads, buffer.indexBuffer.Length, DrawElementsType.UnsignedInt, 0);
                 }
             }
+            //}
             GL.BindTexture(TextureTarget.Texture2D, specialTex.ID);
-            for (int j = 0; j < drawCreatures.Count; j++)
+            /*for (int j = 0; j < drawCreatures.Count; j++)
             {
-                mat = Matrix4.CreateTranslation(drawCreatures[j][0].translation);  //Create a translation matrix
+                mat = Matrix4.CreateTranslation(drawCreatures[drawCreatures.Count - 1][0].translation);  //Create a translation matrix
                 GL.MatrixMode(MatrixMode.Modelview);    //Load the modelview matrix, last in the chain of view matrices
                 GL.LoadMatrix(ref mat);                 //Load the translation matrix into the modelView matrix
-                mat = Matrix4.CreateScale(drawCreatures[j][0].scale);
+                mat = Matrix4.CreateScale(drawCreatures[drawCreatures.Count - 1][0].scale);
                 GL.MultMatrix(ref mat);                     //Multiply the scale matrix with the modelview matrix
-                mat = Matrix4.CreateRotationZ(drawCreatures[j][0].rotation);
+                mat = Matrix4.CreateRotationZ(drawCreatures[drawCreatures.Count - 1][0].rotation);
                 //GL.MultMatrix(ref mat);
                 GL.DrawElements(PrimitiveType.Quads, buffer.indexBuffer.Length, DrawElementsType.UnsignedInt, 0);
-            }
+            }*/
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, buffer.IBO);
             GL.BindBuffer(BufferTarget.ArrayBuffer, buffer.VBO);
             //Change texture
