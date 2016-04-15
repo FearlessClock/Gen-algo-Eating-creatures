@@ -16,6 +16,11 @@ namespace Gen_algo_Eating_creatures
         string password;
         MySqlConnection connection;
 
+        public DBConnect()
+        {
+            Initialize();
+        }
+
         //Initialize values
         private void Initialize()
         {
@@ -170,6 +175,43 @@ namespace Gen_algo_Eating_creatures
                 return list;
             }
         }
+        public List<string>[] Select(string query)
+        {
+
+            //Create a list to store the result
+            List<string>[] list = new List<string>[2];
+            list[0] = new List<string>();
+            list[1] = new List<string>();
+
+            //Open connection
+            if (this.OpenConnection() == true)
+            {
+                //Create Command
+                MySqlCommand cmd = new MySqlCommand(query, connection);
+                //Create a data reader and Execute the command
+                MySqlDataReader dataReader = cmd.ExecuteReader();
+
+                //Read the data and store them in the list
+                while (dataReader.Read())
+                {
+                    list[0].Add(dataReader["id"] + "");
+                    list[1].Add(dataReader["genome"] + "");
+                }
+
+                //close Data Reader
+                dataReader.Close();
+
+                //close Connection
+                this.CloseConnection();
+
+                //return list to be displayed
+                return list;
+            }
+            else
+            {
+                return list;
+            }
+        }
 
         //Count statement
         public int Count()
@@ -197,14 +239,5 @@ namespace Gen_algo_Eating_creatures
             }
         }
 
-        //Backup
-        public void Backup()
-        {
-        }
-
-        //Restore
-        public void Restore()
-        {
-        }
     }
 }

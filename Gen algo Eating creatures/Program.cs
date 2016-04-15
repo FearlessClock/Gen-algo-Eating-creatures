@@ -11,7 +11,7 @@ namespace Gen_algo_Eating_creatures
     {
         static void Main(string[] args)
         {
-            GameWindow window = new GameWindow(800, 600);
+            GameWindow window = new GameWindow(1366, 768, OpenTK.Graphics.GraphicsMode.Default, "Evolve", GameWindowFlags.Fullscreen);
             Game game = new Game(window);
 
             window.Run();

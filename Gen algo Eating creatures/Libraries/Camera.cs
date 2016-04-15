@@ -69,7 +69,13 @@ namespace Gen_algo_Eating_creatures
             cursorSize = curSize;
         }
 
-        static bool end = true;
+        static bool end = false;
+        static public bool ChangeString
+        {
+            get {
+                return end;
+                }
+        }
         /// <summary>
         /// Check if any of the buttons or keys have been checked
         /// </summary>
@@ -251,6 +257,7 @@ namespace Gen_algo_Eating_creatures
         /// </summary>
         public static void MoveCamera()
         {
+            CheckPresses();
             Matrix4 proj = Matrix4.CreateOrthographicOffCenter(0, window.Width, window.Height, 0, 0, 1);
 
             GL.MatrixMode(MatrixMode.Projection);
@@ -285,7 +292,14 @@ namespace Gen_algo_Eating_creatures
         private static void UpdateMouseState()
         {
             lastMouse = mouse;
-            mouse = Mouse.GetCursorState();
+            try
+            {
+                mouse = Mouse.GetCursorState();
+            }
+            catch(TypeInitializationException e)
+            {
+                Console.WriteLine(e.ToString());
+            }
             if (end)
                 Mouse.SetPosition(window.Width / 2, window.Height / 2);
         }

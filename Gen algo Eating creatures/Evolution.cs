@@ -10,7 +10,7 @@ namespace Gen_algo_Eating_creatures
     {
         static public int lastMaxTotal = 0;
 
-        static public Creature[] Evole(Creature[] population)
+        static public Creature[] Evole(Creature[] population, GameWindow window)
         {
             int maxTotal = 0;
             foreach (Creature c in population)
@@ -34,7 +34,7 @@ namespace Gen_algo_Eating_creatures
             Creature[] nextPop = new Creature[population.Length];
             for (int i = 0; i < population.Length; i++)
             {
-                nextPop[i] = new Creature(new Vector2((float)Math.Cos(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300, (float)Math.Sin(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300),
+                nextPop[i] = new Creature(new Vector2(window.Width / 2, window.Height / 2)/*(float)Math.Cos(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300, (float)Math.Sin(MathHelper.DegreesToRadians(i * 10)) * (30 + i) + 300)*/,
                     CrossOver(population[rand.Next(0, population.Length)], population[rand.Next(0, population.Length)],
                     rand), OpenTK.Vector2.UnitX, (int)population[i].windowSize.X, (int)population[i].windowSize.Y, 3);
             }
@@ -51,14 +51,16 @@ namespace Gen_algo_Eating_creatures
                 for (int i = 0; i < middle; i++)
                 {
                     if (rand.NextDouble() < 0.1)
-                        Mutate(rand);
-                    dna += a.genome[i];
+                        dna += Mutate(rand, a.genome[i]);
+                    else
+                        dna += a.genome[i];
                 }
                 for (int i = middle; i < a.genome.Length; i++)
                 {
                     if (rand.NextDouble() < 0.1)
-                        Mutate(rand);
-                    dna += b.genome[i];
+                        dna += Mutate(rand, b.genome[i]);
+                    else
+                        dna += b.genome[i];
                 }
             }
             else
@@ -66,31 +68,43 @@ namespace Gen_algo_Eating_creatures
                 for (int i = 0; i < middle; i++)
                 {
                     if (rand.NextDouble() < 0.1)
-                        Mutate(rand);
-                    dna += b.genome[i];
+                        dna += Mutate(rand, b.genome[i]);
+                    else
+                        dna += b.genome[i];
                 }
                 for (int i = middle; i < a.genome.Length; i++)
                 {
                     if (rand.NextDouble() < 0.1)
-                        Mutate(rand);
-                    dna += a.genome[i];
+                        dna += Mutate(rand, a.genome[i]);
+                    else
+                        dna += a.genome[i];
                 }
             }
 
             return dna;
         }
 
-        static private char Mutate(Random rand)
+        static private char Mutate(Random rand, char a)
         {
+            Console.WriteLine("Mutation has occurd " + a);
             switch (rand.Next(0, 4))
             {
                 case 0:
                 case 1:
-                    return 'F';
+                    if (a != 'F')
+                        return 'F';
+                    else
+                        return 'L';
                 case 2:
-                    return 'L';
+                    if (a != 'L')
+                        return 'L';
+                    else
+                        return 'R';
                 case 3:
-                    return 'R';
+                    if (a != 'R')
+                        return 'R';
+                    else
+                        return 'F';
                 default:
                     return 'F';
             }
